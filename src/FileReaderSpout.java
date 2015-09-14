@@ -11,15 +11,19 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
+import backtype.storm.utils.Utils;
 
 public class FileReaderSpout implements IRichSpout {
   private SpoutOutputCollector _collector;
   private TopologyContext context;
-
+  private FileReader fileReader;
+  private boolean completed = false;
 
   @Override
   public void open(Map conf, TopologyContext context,
                    SpoutOutputCollector collector) {
+
+    this.context = context;
 
      /*
     ----------------------TODO-----------------------
@@ -27,8 +31,14 @@ public class FileReaderSpout implements IRichSpout {
 
 
     ------------------------------------------------- */
+    String inpFileName = new String("data.txt");
 
-    this.context = context;
+    try {
+        this.fileReader = new FileReader(inpFileName);
+    } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error reading file " + inpFileName);
+    }
+
     this._collector = collector;
   }
 
@@ -43,6 +53,21 @@ public class FileReaderSpout implements IRichSpout {
 
     ------------------------------------------------- */
 
+        if (this.completed) {
+            Utils.sleep(100);
+        }
+
+        String sentence;
+        BufferedReader reader = new BufferedReader(this.fileReader);
+        try {
+            while ((sentence = reader.readLine().trim()) != null) {
+                this._collector.emit(new Values(sentence));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading tuple", e);
+        } finally {
+            completed = true;
+        }
 
   }
 
@@ -61,7 +86,11 @@ public class FileReaderSpout implements IRichSpout {
 
 
     ------------------------------------------------- */
-
+	try {
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
   }
 
 

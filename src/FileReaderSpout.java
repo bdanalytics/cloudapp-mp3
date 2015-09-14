@@ -16,8 +16,14 @@ import backtype.storm.utils.Utils;
 public class FileReaderSpout implements IRichSpout {
   private SpoutOutputCollector _collector;
   private TopologyContext context;
+  private String inpFileName;
   private FileReader fileReader;
   private boolean completed = false;
+
+  FileReaderSpout(String argFileName) {
+	super();
+	this.inpFileName = new String(argFileName);
+  }
 
   @Override
   public void open(Map conf, TopologyContext context,
@@ -31,10 +37,10 @@ public class FileReaderSpout implements IRichSpout {
 
 
     ------------------------------------------------- */
-    String inpFileName = new String("data.txt");
+    //String inpFileName = new String("data.txt");
 
     try {
-        this.fileReader = new FileReader(inpFileName);
+        this.fileReader = new FileReader(this.inpFileName);
     } catch (FileNotFoundException e) {
             throw new RuntimeException("Error reading file " + inpFileName);
     }

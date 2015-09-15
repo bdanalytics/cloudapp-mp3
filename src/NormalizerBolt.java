@@ -12,7 +12,7 @@ import java.util.List;
  * A bolt that normalizes the words, by removing common words and making them lower case.
  */
 public class NormalizerBolt extends BaseBasicBolt {
-  private List<String> commonWords = Arrays.asList("the", "be", "a", "an", "and",
+  private List<String> commonWords = Arrays.asList("", "the", "be", "a", "an", "and",
       "of", "to", "in", "am", "is", "are", "at", "not", "that", "have", "i", "it",
       "for", "on", "with", "he", "she", "as", "you", "do", "this", "but", "his",
       "by", "from", "they", "we", "her", "or", "will", "my", "one", "all", "s", "if",
@@ -28,7 +28,10 @@ public class NormalizerBolt extends BaseBasicBolt {
      2. remove the common words
 
     ------------------------------------------------- */
-
+      String word = tuple.getString(0).toLowerCase();
+      //if (("".isequal(word) && !commonWords.contains(word))
+      if ((word.length() > 0) && !commonWords.contains(word))
+      	collector.emit(new Values(word));
 
   }
 

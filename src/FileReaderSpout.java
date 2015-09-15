@@ -21,7 +21,6 @@ public class FileReaderSpout implements IRichSpout {
   private boolean completed = false;
 
   FileReaderSpout(String argFileName) {
-	super();
 	this.inpFileName = new String(argFileName);
   }
 
